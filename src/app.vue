@@ -15,13 +15,13 @@
 
             <div class="flex items-center space-x-2">
                 <button
-                    @click="$vfm.open(`help-panel`)"
+                    @click="$vfm.open(`hack-help-panel`)"
                     class="bg-white border rounded-full border-black hover:bg-gray-100 font-bold w-10 h-10 ml-auto"
                 >
                     {{ '?' }}
                 </button>
 
-                <HelpPanel></HelpPanel>
+                <HackHelpPanel></HackHelpPanel>
 
                 <button
                     @click="changeLang"
@@ -80,7 +80,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import type { Component, PropType } from 'vue';
 
-import HelpPanel from './components/helpers/help-panel/help-panel.vue';
+import HackHelpPanel from './components/helpers/hack-help-panel/hack-help-panel.vue';
 import { useChartStore } from './stores/chartStore';
 import { useDataStore } from './stores/dataStore';
 import { useI18n } from 'vue-i18n';

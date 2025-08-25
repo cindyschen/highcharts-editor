@@ -1,15 +1,15 @@
 <template>
     <VueFinalModal
-        modalId="help-panel"
+        modalId="hack-help-panel"
         content-class="bg-white w-5/6 sm:w-2/3 rounded-lg p-4 h-5/6 space-y-4"
-        class="help-panel flex justify-center items-center"
+        class="hack-help-panel flex justify-center items-center"
     >
         <header class="flex justify-between border-b pb-4 top-0 items-center">
             <h2 class="text-lg font-semibold">
                 <span class="hidden sm:inline">{{ $t('HACK.help.title') }}</span>
                 <span class="inline sm:hidden">{{ $t('HACK.help.title.mobile') }}</span>
             </h2>
-            <button class="text-gray-500 hover:text-gray-900 font-black" @click="$vfm.close('help-panel')">✕</button>
+            <button class="text-gray-500 hover:text-gray-900 font-black" @click="$vfm.close('hack-help-panel')">✕</button>
         </header>
 
         <div class="help-section-headers pl-3 pr-3 overflow-y-auto h-[calc(100vh-15rem)] max-w-none">
@@ -50,7 +50,7 @@ import { marked } from 'marked';
 marked.setOptions({ breaks: true });
 
 export default defineComponent({
-    name: 'HelpPanel',
+    name: 'HackHelpPanel',
     components: { VueFinalModal },
     data() {
         return {
@@ -61,12 +61,13 @@ export default defineComponent({
     },
 
     mounted() {
-        this.fetchMarkdown();
+        this.hackFetchMarkdown();
     },
     methods: {
-        fetchMarkdown(): void {
-            const helpPath = process.env.NODE_ENV === 'development' ? `../../help/` : `./help/`;
+        hackFetchMarkdown(): void {
+            const helpPath = `/hack-help/`;
             const helpFile = `help-en.md`;
+            console.log("got here")
 
             axios.get(`${helpPath}${helpFile}`).then((r) => {
                 const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
