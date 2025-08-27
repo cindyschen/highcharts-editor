@@ -9,7 +9,9 @@
                 <span class="hidden sm:inline">{{ $t('HACK.help.title') }}</span>
                 <span class="inline sm:hidden">{{ $t('HACK.help.title.mobile') }}</span>
             </h2>
-            <button class="text-gray-500 hover:text-gray-900 font-black" @click="$vfm.close('hack-help-panel')">✕</button>
+            <button class="text-gray-500 hover:text-gray-900 font-black" @click="$vfm.close('hack-help-panel')">
+                ✕
+            </button>
         </header>
 
         <div class="help-section-headers pl-3 pr-3 overflow-y-auto h-[calc(100vh-15rem)] max-w-none">
@@ -44,8 +46,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { VueFinalModal } from 'vue-final-modal';
-import axios from 'axios';
 import { marked } from 'marked';
+// import axios from 'axios';
+import { helpEnMd, helpImages } from '@/hack-help/assets';
 
 marked.setOptions({ breaks: true });
 
@@ -64,38 +67,40 @@ export default defineComponent({
         this.hackFetchMarkdown();
     },
     methods: {
-        hackFetchMarkdown(): void {
-            const helpPath = `/hack-help/`;
-            const helpFile = `help-en.md`;
-            console.log("got here")
+        async hackFetchMarkdown(): Promise<void> {
+            // const helpPath = `/hack-help/`;
+            // const helpFile = `help-en.md`;
+            console.log('got here. ');
 
-            axios.get(`${helpPath}${helpFile}`).then((r) => {
-                const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
-                const renderer = new marked.Renderer();
+            // axios.get(`${helpPath}${helpFile}`).then((r) => {
+            const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
+            const renderer = new marked.Renderer();
 
-                renderer.image = (token) => {
-                    let href = token.href;
-                    let text = token.text || '';
-                    href = helpPath + 'images/' + href;
-                    return `   <div style="max-width:100%; overflow-x:auto;">
-      <img src="${href}" alt="${text}" style="display:block; max-width:none; width:auto; max-height:400px;" />
+            renderer.image = (token) => {
+                let href = token.href;
+                let text = token.text || '';
+
+                const key = `./images/${href}`;
+                const imageSrc = helpImages[key] || href;
+                return `   <div style="max-width:100%; overflow-x:auto;">
+      <img src="${imageSrc}" alt="${text}" style="display:block; max-width:none; width:auto; max-height:400px;" />
     </div>`;
-                };
+            };
 
-                this.helpMd = r.data.replace(new RegExp(String.fromCharCode(13), 'g'), '');
-                let section;
-                while ((section = reg.exec(this.helpMd))) {
-                    const info_results = marked(section[0].split('\n').splice(2).join('\n'), { renderer }) as string;
-                    this.helpSections.push({
-                        header: section[1],
-                        info: info_results,
-                        drawn: true,
-                        expanded: false
-                    });
-                    //copy of the original text to refer to after highlighting
-                    this.originalTextArray.push(info_results);
-                }
-            });
+            this.helpMd = helpEnMd.replace(new RegExp(String.fromCharCode(13), 'g'), '');
+            let section;
+            while ((section = reg.exec(this.helpMd))) {
+                const info_results = marked(section[0].split('\n').splice(2).join('\n'), { renderer }) as string;
+                this.helpSections.push({
+                    header: section[1],
+                    info: info_results,
+                    drawn: true,
+                    expanded: false
+                });
+                // copy of the original text to refer to after highlighting
+                this.originalTextArray.push(info_results);
+            }
+            // });
         }
     }
 });
